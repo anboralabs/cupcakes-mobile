@@ -1,2 +1,3 @@
 rootProject.name = "Cup cakes"
 include ':app'
+include ':data'
