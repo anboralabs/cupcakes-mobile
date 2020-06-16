@@ -3,7 +3,7 @@ package co.anbora.labs.cupcakes.domain.usecase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
-import co.anbora.labs.cupcakes.domain.state.Result
+import co.anbora.labs.cupcakes.domain.state.State
 
 /**
  * Executes business logic synchronously or asynchronously using Coroutines.
@@ -19,18 +19,18 @@ abstract class SuspendUseCase<in P, R>(private val coroutineDispatcher: Coroutin
      *
      * @param parameters the input parameters to run the use case with
      */
-    suspend operator fun invoke(parameters: P): Result<R> {
+    suspend operator fun invoke(parameters: P): State<R> {
         return try {
             // Moving all use case's executions to the injected dispatcher
             // In production code, this is usually the Default dispatcher (background thread)
             // In tests, this becomes a TestCoroutineDispatcher
             withContext(coroutineDispatcher) {
                 execute(parameters).let {
-                    Result.success(it)
+                    State.success(it)
                 }
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            State.error(e)
         }
     }
 
